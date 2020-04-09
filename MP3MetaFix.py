@@ -1,10 +1,26 @@
+######################################
+#                                    #
+#           MP3 META FIX             #
+#  Assigning Album Artist and Artist #
+#  metadata to MP3 files based off   #
+#       their parent folder          #  
+#                                    #
+######################################
+#                                    #
+#    Directory format should be:     #
+#       Top Directory (i.e. Music)   #
+#         > Artist Folder            #
+#            >  Music tracks         #
+#                                    #
+######################################
+
 import eyed3, os
 
-testDirectory = input("Enter the directory like this G:\\My Drive\\PlexLink\\Audiobooks:")
+topDirectory = input("Enter the parent directory:")
 logFile = open("errors.log", "w")
 
 def editMeta(topFolder):
-    for root, dirs, files in os.walk(testDirectory + "\\" + topFolder):
+    for root, dirs, files in os.walk(topDirectory + "\\" + topFolder):
         if not files:
             continue
         for f in files:
@@ -13,7 +29,6 @@ def editMeta(topFolder):
                 changeFile = eyed3.load(fullFile)
                 print(fullFile)
                 changeCheck = 1
-
                 try:
                     try:
                         print("OLD = " + str(changeFile.tag.album_artist))
@@ -34,7 +49,6 @@ def editMeta(topFolder):
                             except AttributeError:
                                 "Couldn't change the Album Artist."
                             changeCheck += 1
-
                     try:
                         if changeFile.tag.artist != topFolder:
                             print("Artist doesn't match")
@@ -71,7 +85,7 @@ def subDirOne(root_dir):
 
     return all_dirs
 
-output_dirs = subDirOne(testDirectory)
+output_dirs = subDirOne(topDirectory)
 print(output_dirs)
 
 for item in sorted(output_dirs):
